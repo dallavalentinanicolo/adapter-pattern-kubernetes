@@ -1,0 +1,16 @@
+{{- range $i, $podName := .Values.pods }}
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ $podName }}
+spec:
+  containers:
+  - name: "busybox"
+    image: "busybox"
+    command:
+    - "sleep"
+    - "3600"
+  nodeSelector:
+    kubernetes.io/hostname: "non-existent-node"
+---
+{{- end }}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Pods</title>
+</head>
+<body>
+    <h1>List of Pending Pods</h1>
+    {{if .}}
+    <table border="1">
+        <tr>
+            <th>Name</th>
+            <th>Namespace</th>
+            <th>Status</th>
+        </tr>
+        {{range .}}
+        <tr>
+            <td>{{.Name}}</td>
+            <td>{{.Namespace}}</td>
+            <td>{{.Status}}</td>
+        </tr>
+        {{end}}
+    </table>
+    {{else}}
+    <p>No pending pods found.</p>
+    {{end}}
+</body>
+</html>
