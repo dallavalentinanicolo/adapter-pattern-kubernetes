@@ -1,0 +1,15 @@
+---
+# Source: my-pending-pods-chart/templates/pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pending-pod-1
+spec:
+  containers:
+  - name: "busybox"
+    image: "busybox"
+    command:
+    - "sleep"
+    - "3600"
+  nodeSelector:
+    kubernetes.io/hostname: "non-existent-node"

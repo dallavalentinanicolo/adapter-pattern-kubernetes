@@ -1,0 +1,5 @@
+apiVersion: v2
+name: my-pending-pods-chart
+description: A Helm chart to deploy pending pods
+version: 0.1.0
+appVersion: "1.0"
