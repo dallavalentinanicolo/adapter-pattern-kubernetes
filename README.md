@@ -36,7 +36,8 @@ clientk8s/: Manages Kubernetes client initialization.
 prometheus/: Handles Prometheus metric exposure.
 push/: Contains the Push Notification logic and the Adapter implementation.
 resources/: Includes functionality for interacting with Kubernetes resources, like fetching pending pods.
-testing-pending-pod/ contains helm-chart to test pod-pending
+my-pending-pods-helm/ contains helm-chart to test pod-pending
+testing-pending-pod/ contains the manifest to test pod-pending
 
 ## How to Run
 
