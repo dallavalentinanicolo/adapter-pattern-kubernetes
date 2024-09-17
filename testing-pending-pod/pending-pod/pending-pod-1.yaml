@@ -1,5 +1,5 @@
 ---
-# Source: my-pending-pods-chart/templates/pod.yaml
+# Source: my-pending-pods-helm/templates/pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
