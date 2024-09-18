@@ -9,6 +9,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -47,8 +48,8 @@ func displayPendingPods(clientset *kubernetes.Clientset, w http.ResponseWriter) 
 }
 
 const (
-	enableSms              = true
-	enablePushNotification = false
+	enableSms              = true  // simulate by display terminal message due to cost
+	enablePushNotification = false // via Telegram
 	enableMail             = false
 	kubeconfigPath         = ""
 )
@@ -138,11 +139,20 @@ func sendNotifications(message string, currentPendingPodCount int) {
 	}
 
 	if enablePushNotification {
-		pushService := push.PushNotification{
-			PodPending: strconv.Itoa(currentPendingPodCount),
+		telegramBothToken := os.Getenv("TELEGRAM_BOT_TOKEN")
+		telegramChatId := os.Getenv("TELEGRAM_CHAT_ID")
+		if telegramBothToken != "" && telegramChatId != "" {
+			pushService := push.PushNotification{
+				PodPending: strconv.Itoa(currentPendingPodCount),
+				Token:      telegramBothToken,
+				ChatID:     telegramChatId,
+			}
+			notificatPush := push.Adapter{PushService: pushService}
+			notifiers = append(notifiers, notificatPush)
+		} else {
+			log.Fatal("ERROR, please export TELEGRAM_BOT_TOKEN and TELEGRAM_BOT_TOKEN")
+			os.Exit(1)
 		}
-		notificatPush := push.Adapter{PushService: pushService}
-		notifiers = append(notifiers, notificatPush)
 	}
 
 	if enableMail {
