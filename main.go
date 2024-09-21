@@ -55,7 +55,7 @@ const (
 )
 
 var (
-	sms Sms = Sms{phoneNumber: "01234567890"}
+	sms Sms = Sms{phoneNumber: "012345678901011121314151617"}
 )
 
 func main() {
