@@ -50,13 +50,12 @@ func displayPendingPods(clientset *kubernetes.Clientset, w http.ResponseWriter) 
 const (
 	enableSms              = true  // simulate by display terminal message due to cost
 	enablePushNotification = false // via Telegram
-	enableMail             = false
+	enableMail             = false // via Gmail SMTP
 	kubeconfigPath         = ""
 )
 
 var (
-	mail Mail = Mail{emailAddress: "localhost@localhost.org"}
-	sms  Sms  = Sms{phoneNumber: "01234567890"}
+	sms Sms = Sms{phoneNumber: "01234567890"}
 )
 
 func main() {
@@ -69,7 +68,7 @@ func main() {
 	// Expose the Prometheus metrics on /metrics endpoint
 	go metricsProm.ExposeMetrics()
 
-	// Initialize the previous pending pod count to monitor changes.
+	// Initialize the previous pending pod count to monitor changes
 	var previousPendingPodCount int
 
 	// Start a goroutine to check pending pods every minute
@@ -79,7 +78,7 @@ func main() {
 		for {
 			select {
 			case <-ticker.C:
-				// Fetch the list of pending pods.
+				// Fetch the list of pending pods
 				pendingPods, err := pod.GetPendingPod(clientset)
 				if err != nil {
 					log.Printf("Error fetching pending pods: %v", err)
@@ -88,15 +87,21 @@ func main() {
 
 				currentPendingPodCount := len(pendingPods)
 
-				// Update the Prometheus metric for pending pods.
+				// Update the Prometheus metric for pending pods
 				metricsProm.UpdatePodPendingMetric(currentPendingPodCount)
 
-				// Check if the pending pod count has changed.
+				// Check if the pending pod count has changed
 				if currentPendingPodCount != previousPendingPodCount {
-					// Prepare a notification message based on the number of pending pods.
+					// Prepare a notification message based on the number of pending pods
 					var message string
+					var singolarOrPlural string
 					if currentPendingPodCount > 0 {
-						message = fmt.Sprintf("Hey, there are %d pending pods in your cluster.", currentPendingPodCount)
+						if currentPendingPodCount > 1 {
+							singolarOrPlural = "are"
+						} else {
+							singolarOrPlural = "is"
+						}
+						message = fmt.Sprintf("Hey SRE, there %s %d pending pods in your cluster.", singolarOrPlural, currentPendingPodCount)
 					} else if currentPendingPodCount == 0 && previousPendingPodCount > 0 {
 						message = "Good news! All pending pods have been resolved."
 					}
@@ -105,7 +110,7 @@ func main() {
 					sendNotifications(message, currentPendingPodCount)
 				}
 
-				// Update the previous pending pod count.
+				// Update the previous pending pod count
 				previousPendingPodCount = currentPendingPodCount
 			}
 		}
@@ -139,9 +144,7 @@ func sendNotifications(message string, currentPendingPodCount int) {
 	}
 
 	if enablePushNotification {
-		telegramBothToken := os.Getenv("TELEGRAM_BOT_TOKEN")
-		telegramChatId := os.Getenv("TELEGRAM_CHAT_ID")
-		if telegramBothToken != "" && telegramChatId != "" {
+		if telegramBothToken, telegramChatId := os.Getenv("TELEGRAM_BOT_TOKEN"), os.Getenv("TELEGRAM_CHAT_ID"); telegramBothToken != "" && telegramChatId != "" {
 			pushService := push.PushNotification{
 				PodPending: strconv.Itoa(currentPendingPodCount),
 				Token:      telegramBothToken,
@@ -156,7 +159,20 @@ func sendNotifications(message string, currentPendingPodCount int) {
 	}
 
 	if enableMail {
-		notifiers = append(notifiers, mail)
+		if emailAddressSender, passwordApp := os.Getenv("EMAIL_SENDER"), os.Getenv("GMAIL_APP_PASSWORD"); emailAddressSender != "" && passwordApp != "" {
+			mailNotifier := Mail{
+				emailAddress: emailAddressSender,
+				password:     passwordApp,
+				smtpHost:     "smtp.gmail.com",
+				smtpPort:     "587",
+				to:           []string{os.Getenv("EMAIL_TO")},
+			}
+			// Append the mailNotifier inside the if block
+			notifiers = append(notifiers, mailNotifier)
+		} else {
+			log.Fatal("ERROR: EMAIL_SENDER or GMAIL_APP_PASSWORD is not set.")
+			os.Exit(1)
+		}
 	}
 
 	// Send notifications via all enabled notifiers
