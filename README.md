@@ -90,5 +90,4 @@ The make file will automate the cluster creation and apply the pending pod manif
 Set up the environment: Make sure you have Go installed. Clone the repository and navigate to the project directory.
 
 Run the application:
-
 `go run *.go`
