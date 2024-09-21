@@ -32,6 +32,10 @@ Notification via Sms simulation(fmt out):
 
 <img src="./images/sms-simulation.png" alt="SMS simulation" width="600">
 
+Notification via Email:
+
+<img src="./images/email-alerting.png" alt="SMS simulation" width="600">
+
 `Prometheus Metrics`: The application generate gauge metrics with Prometheus library then you can see the exposed metrics about the number of pending pods.
 
 Metrics are exposed at `http://localhost:8080/metrics` 
@@ -90,5 +94,4 @@ The make file will automate the cluster creation and apply the pending pod manif
 Set up the environment: Make sure you have Go installed. Clone the repository and navigate to the project directory.
 
 Run the application:
-
 `go run *.go`
