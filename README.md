@@ -95,3 +95,4 @@ Set up the environment: Make sure you have Go installed. Clone the repository an
 
 Run the application:
 `go run *.go`
+
