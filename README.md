@@ -8,6 +8,8 @@ This project is a `education only` project created solely for the purpose of `le
 
 The code and concepts presented here are for `educational` use only and are not intended for production environments or commercial applications. The sms's notification is `simulated` (stdout) to avoid incurring costs from external providers. 
 
+`Please note, I am not responsible for any direct, indirect, incidental, or consequential costs, issues, or damages that may arise from the use of this project, including but not limited to issues in connection with third-party services such as Telegram or Gmail. Any usage of this project with third-party services is done at your own risk. By using this project, you agree that the author is not liable for any claims, damages, or other liabilities arising from its use otherwise. Use these services at your own risk.`
+
 ## Overview
 
 This project demonstrates the Adapter structural design pattern in Go by creating a multi-channel notification/alerting system. The system can send notifications through various channels: Email (external Gmail smtp provider), SMS(simulated with `fmt` - stdout), and Push Notification via Telegram bot.
